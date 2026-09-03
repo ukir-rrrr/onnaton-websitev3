@@ -1,9 +1,11 @@
 @import "tailwindcss";
 
 :root {
-  /* Warm kinari / washi palette */
-  --color-paper: #ebe2d0;
-  --color-paper-raised: #e0d4bc;
+  /* Warm kinari / washi palette
+   * fade 0.52 = kinari original | 0.60 = pattern + slightly white | 0.72 = whiter, softer pattern
+   * Previous kinari: #ebe2d0 / #e0d4bc, fade 0.52, tint rgb(235 226 208) */
+  --color-paper: #f0ebe3;
+  --color-paper-raised: #e8e2d8;
   --color-text: #1e1915;
   --color-text-muted: #443d36;
   --color-on-dark: #f2ede6;
@@ -14,15 +16,64 @@
   --color-gold-ink: #74581a; /* 和紙背景の上に置く文字・ラベル用（AA 4.5:1 以上） */
   --color-wipe: #a68c6e;
 
-  /* Photo washi (Gemini) — primary surface texture */
-  --washi-photo: url("/textures/washi-bg.jpg");
-  /* Higher = softer / less visible grain (0.1 was original) */
-  --washi-texture-fade: 0.52;
-  --washi-photo-tint: linear-gradient(
-    rgba(235, 226, 208, var(--washi-texture-fade)),
-    rgba(235, 226, 208, var(--washi-texture-fade))
-  );
+  /*
+   * Background texture switch
+   * ─────────────────────────
+   * Active: japanese-paper.jpg (2048×1365)
+   *
+   * asanoha (麻の葉 CSS):
+   *   --washi-photo: var(--washi-pattern-asanoha);
+   *   --washi-texture: var(--washi-pattern-asanoha);
+   *   --washi-pattern-size: 20px 34.64px;
+   *   --washi-photo-repeat: repeat;
+   *   --washi-raised-overlay: linear-gradient(rgba(232, 226, 216, 0.45), rgba(232, 226, 216, 0.45));
+   *
+   * haikei photo:
+   *   --washi-photo: url("/images/haikei.jfif");
+   *   --washi-texture: var(--washi-photo-tint), var(--washi-photo);
+   *   --washi-photo-size: cover;
+   *   --washi-photo-repeat: no-repeat;
+   */
+  --washi-photo: url("/images/japanese-paper.jpg");
   --washi-texture: var(--washi-photo-tint), var(--washi-photo);
+  --washi-photo-size: cover;
+  --washi-photo-repeat: no-repeat;
+  --washi-raised-overlay: linear-gradient(
+    rgba(232, 226, 216, 0.75),
+    rgba(232, 226, 216, 0.75)
+  );
+
+  /* asanoha (麻の葉 CSS)
+  --washi-pattern-asanoha: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='41.57' viewBox='0 0 24 41.57'%3E%3Cg fill='none' stroke='%23c5bdb0' stroke-width='0.45'%3E%3Cpath d='M12 0L24 10.39 12 20.78 0 10.39Z'/%3E%3Cpath d='M12 20.78L24 31.17 12 41.57 0 31.17Z'/%3E%3Cpath d='M12 0v20.78'/%3E%3Cpath d='M0 10.39h24'/%3E%3Cpath d='M0 10.39l12 10.39'/%3E%3Cpath d='M24 10.39L12 20.78'/%3E%3Cpath d='M0 31.17h24'/%3E%3Cpath d='M0 31.17l12-10.39'/%3E%3Cpath d='M24 31.17L12 20.78'/%3E%3C/g%3E%3C/svg%3E");
+  --washi-pattern-size: 20px 34.64px;
+  --washi-photo: var(--washi-pattern-asanoha);
+  --washi-texture: var(--washi-pattern-asanoha);
+  --washi-photo-size: var(--washi-pattern-size);
+  --washi-photo-repeat: repeat;
+  --washi-raised-overlay: linear-gradient(rgba(232, 226, 216, 0.45), rgba(232, 226, 216, 0.45));
+  */
+
+  /* haikei (800×1316) — photo
+  --washi-photo: url("/images/haikei.jfif");
+  --washi-texture: var(--washi-photo-tint), var(--washi-photo);
+  --washi-photo-size: cover;
+  --washi-photo-repeat: no-repeat;
+  --washi-raised-overlay: linear-gradient(rgba(232, 226, 216, 0.82), rgba(232, 226, 216, 0.82));
+  */
+
+  /* haikei_02 (1376×768) — photo
+  --washi-photo: url("/images/haikei_02.jfif");
+  --washi-texture: var(--washi-photo-tint), var(--washi-photo);
+  --washi-photo-size: cover;
+  --washi-photo-repeat: no-repeat;
+  --washi-raised-overlay: linear-gradient(rgba(232, 226, 216, 0.82), rgba(232, 226, 216, 0.82));
+  */
+  /* Light tint to match site kinari; lower = more paper fiber visible (try 0.35–0.6) */
+  --washi-texture-fade: 0.45;
+  --washi-photo-tint: linear-gradient(
+    rgba(245, 241, 235, var(--washi-texture-fade)),
+    rgba(245, 241, 235, var(--washi-texture-fade))
+  );
 
   /* Previous pure-CSS washi (backup — see git history before washi-bg.jpg):
      SVG feTurbulence noise + radial/repeating gradients. */
@@ -119,23 +170,18 @@ body {
 .bg-ink {
   background-color: var(--color-paper);
   background-image: var(--washi-texture);
-  background-size: cover;
+  background-size: var(--washi-photo-size);
   background-position: center top;
-  background-repeat: no-repeat;
+  background-repeat: var(--washi-photo-repeat);
   background-attachment: fixed;
 }
 
 .bg-ink-raised {
   background-color: var(--color-paper-raised);
-  background-image:
-    linear-gradient(
-      rgba(224, 212, 188, 0.86),
-      rgba(224, 212, 188, 0.86)
-    ),
-    var(--washi-photo);
-  background-size: cover;
+  background-image: var(--washi-raised-overlay), var(--washi-photo);
+  background-size: var(--washi-photo-size);
   background-position: center top;
-  background-repeat: no-repeat;
+  background-repeat: var(--washi-photo-repeat);
   background-attachment: fixed;
 }
 
@@ -156,9 +202,9 @@ body {
     pointer-events: none;
     background-color: var(--color-paper);
     background-image: var(--washi-texture);
-    background-size: cover;
+    background-size: var(--washi-photo-size);
     background-position: center top;
-    background-repeat: no-repeat;
+    background-repeat: var(--washi-photo-repeat);
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
   }
@@ -175,8 +221,8 @@ body {
 
   .bg-ink-raised {
     background-attachment: scroll;
-    background-size: cover;
-    background-repeat: no-repeat;
+    background-size: var(--washi-photo-size);
+    background-repeat: var(--washi-photo-repeat);
     background-position: center top;
   }
 }
